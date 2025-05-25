@@ -1,9 +1,11 @@
 package com.satobrothers.defineTimes.controller;
 
+import com.satobrothers.defineTimes.dto.JogadorAvulsoDTO;
 import com.satobrothers.defineTimes.model.Jogador;
 import com.satobrothers.defineTimes.service.JogadorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
@@ -26,6 +28,16 @@ public class JogadorController {
     @PostMapping("/adicionaLote")
     public ResponseEntity<List<Jogador>> adicionarVarios(@RequestBody List<Jogador> jogadores) {
         return ResponseEntity.ok(jogadorService.saveAll(jogadores));
+    }
+
+    @PostMapping("/avulso")
+    public ResponseEntity<Jogador> adicionarJogadorAvulso(@RequestBody JogadorAvulsoDTO dto) {
+        Jogador jogador = new Jogador();
+        jogador.setNome(dto.getNome());
+        jogador.setNota(dto.getNota());
+        jogador.setConfirmado(true); // jogador avulso sempre confirmado
+
+        return ResponseEntity.ok(jogadorService.adicionar(jogador));
     }
 
     // Read all

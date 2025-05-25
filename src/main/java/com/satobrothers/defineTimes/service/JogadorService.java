@@ -1,70 +1,65 @@
 package com.satobrothers.defineTimes.service;
 
 import com.satobrothers.defineTimes.model.Jogador;
+import com.satobrothers.defineTimes.repository.JogadorRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 public class JogadorService {
-    private final Map<Long, Jogador> jogadorMap = new HashMap<>();
-    private long nextId = 1;
+
+    @Autowired
+    private JogadorRepository jogadorRepository;
 
     public Jogador adicionar(Jogador jogador) {
-        jogador.setId(nextId++);
-        jogadorMap.put(jogador.getId(), jogador);
-        return jogador;
+        return jogadorRepository.save(jogador);
     }
 
     public List<Jogador> listar() {
-        return new ArrayList<>(jogadorMap.values());
+        return jogadorRepository.findAll();
     }
 
     public Optional<Jogador> buscarPorId(Long id) {
-        return Optional.ofNullable(jogadorMap.get(id));
+        return jogadorRepository.findById(id);
     }
 
     public Optional<Jogador> atualizar(Long id, Jogador jogadorAtualizado) {
-        if (jogadorMap.containsKey(id)) {
+        return jogadorRepository.findById(id).map(j -> {
             jogadorAtualizado.setId(id);
-            jogadorMap.put(id, jogadorAtualizado);
-            return Optional.of(jogadorAtualizado);
-        }
-        return Optional.empty();
+            return jogadorRepository.save(jogadorAtualizado);
+        });
     }
 
     public boolean remover(Long id) {
-        return jogadorMap.remove(id) != null;
+        if (jogadorRepository.existsById(id)) {
+            jogadorRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
     public List<List<Jogador>> sortearTimes() {
-        List<Jogador> copia = new ArrayList<>(jogadorMap.values());
-        copia.sort(Comparator.comparingInt(Jogador::getNota).reversed());
+        List<Jogador> jogadoresConfirmados = jogadorRepository.findByConfirmadoTrue();
+        jogadoresConfirmados.sort(Comparator.comparingInt(Jogador::getNota).reversed());
 
         List<Jogador> time1 = new ArrayList<>();
         List<Jogador> time2 = new ArrayList<>();
         List<Jogador> time3 = new ArrayList<>();
 
-        int i = 0;
-        for (Jogador jogador : copia) {
+        for (int i = 0; i < jogadoresConfirmados.size(); i++) {
             switch (i % 3) {
-                case 0 -> time1.add(jogador);
-                case 1 -> time2.add(jogador);
-                case 2 -> time3.add(jogador);
+                case 0 -> time1.add(jogadoresConfirmados.get(i));
+                case 1 -> time2.add(jogadoresConfirmados.get(i));
+                case 2 -> time3.add(jogadoresConfirmados.get(i));
             }
-            i++;
         }
 
         return List.of(time1, time2, time3);
     }
 
     public List<Jogador> saveAll(List<Jogador> jogadores) {
-        List<Jogador> adicionados = new ArrayList<>();
-        for (Jogador jogador : jogadores) {
-            jogador.setId(nextId++);
-            jogadorMap.put(jogador.getId(), jogador);
-            adicionados.add(jogador);
-        }
-        return adicionados;
+        return jogadorRepository.saveAll(jogadores);
     }
 }
