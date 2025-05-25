@@ -1,16 +1,28 @@
 package com.satobrothers.defineTimes.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "M_JOGADOR")
 public class Jogador {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String nome;
+
     private int nota;
+
+    private boolean confirmado;
 
     public Jogador() {}
 
-    public Jogador(Long id, String nome, int nota) {
+    public Jogador(Long id, String nome, int nota, boolean confirmado) {
         this.id = id;
         this.nome = nome;
         this.nota = nota;
+        this.confirmado = confirmado;
     }
 
     public Long getId() {
@@ -37,8 +49,16 @@ public class Jogador {
         this.nota = nota;
     }
 
+    public boolean isConfirmado() {
+        return confirmado;
+    }
+
+    public void setConfirmado(boolean confirmado) {
+        this.confirmado = confirmado;
+    }
+
     @Override
     public String toString() {
-        return nome + " (" + nota + ")";
+        return nome + " (" + nota + ")" + (confirmado ? " [Confirmado]" : "");
     }
 }
