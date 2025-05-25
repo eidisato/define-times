@@ -75,10 +75,10 @@ Aplicação Java Spring Boot para cadastro e sorteio de jogadores em times equil
 
 ## Melhorias Futuras
 
-- Persistência dos dados em banco (MySQL, PostgreSQL, etc)
-- Autenticação e autorização
+- Persistência dos dados em banco (MySQL, PostgreSQL, etc) DONE
+- Autenticação e autorização DONE
 - Frontend para interface amigável
-- Validações avançadas
+- Validações avançadas 50%
 - Testes automatizados
 
 ---
